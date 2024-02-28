@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Listings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <h1>Room Listings</h1>
+
+    <!-- City Selection Dropdown -->
+    <form action="/" method="get">
+        <label for="city">Choose a city:</label>
+        <select name="city" id="city">
+            {% for city in cities %}
+                <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>{{ city | title }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="page" value="1">
+        <input type="submit" value="Search">
+    </form>
+
+    <div class="pagination">
+        {% if current_page > 1 %}
+            <form action="/" method="get" style="display: inline;">
+                <input type="hidden" name="city" value="{{ selected_city }}">
+                <input type="hidden" name="page" value="{{ current_page - 1 }}">
+                <input type="submit" value="Back">
+            </form>
+        {% endif %}
+        <form action="/" method="get" style="display: inline;">
+            <input type="hidden" name="city" value="{{ selected_city }}">
+            <input type="hidden" name="page" value="{{ next_page }}">
+            <input type="submit" value="Next">
+        </form>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map" style="height: 600px;"></div>
+
+    <script type="text/javascript">
+        var roomData = {{ rooms_data | tojson }};
+        var cityCoords = {{ city_coords | tojson }};
+    </script>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</body>
+</html>
